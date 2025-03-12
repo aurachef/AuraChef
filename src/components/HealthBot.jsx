@@ -49,10 +49,9 @@ const HealthBot = () => {
       
       <div 
         className={`relative w-40 h-40 md:w-52 md:h-52 cursor-pointer transform transition-transform ${getAnimationClass()}`}
-        onClick={handleClick}
       >
         <img 
-          src="bot.png" 
+          src="bot2.png" 
           alt="Bot" 
           className="w-full h-full object-contain" 
         />

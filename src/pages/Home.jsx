@@ -86,9 +86,7 @@ const Home = () => {
   return (
     <div className="min-h-screen pt-24 pb-12">
       <div className="page-transition flex flex-col items-center max-w-5xl mx-auto">
-
-     
-
+        
         <HealthTip />
 
         <div className="w-full max-w-4xl mb-6 mt-6">

@@ -41,9 +41,9 @@ const HealthTip = () => {
   }, []);
 
   return (
-    <div className="text-center mt-6 max-w-xl mx-auto">
+    <div className="text-center mt-10 max-w-xl mx-auto">
       <div 
-        className={`glass px-6 py-4 rounded-xl transform transition-all duration-500 ${
+        className={`glass px-6 py-4 rounded-xl transform transition-all duration-500 animate-pulse ${
           isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
       >
