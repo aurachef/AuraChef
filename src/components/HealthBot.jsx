@@ -52,8 +52,8 @@ const HealthBot = () => {
         onClick={handleClick}
       >
         <img 
-          src="/lovable-uploads/fec1303a-be73-4a0e-848b-5122b605ec3f.png" 
-          alt="Health Bot" 
+          src="bot.png" 
+          alt="Bot" 
           className="w-full h-full object-contain" 
         />
         

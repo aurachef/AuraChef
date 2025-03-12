@@ -16,7 +16,7 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Admin Login', path: '/admin-login' },
+    //{ name: 'Admin Login', path: '/admin-login' },
     { name: 'Add Recipe', path: '/add-recipe' },
     { name: 'Calorie Tracking', path: '/calorie-tracking' },
     { name: 'About', path: '/about' },

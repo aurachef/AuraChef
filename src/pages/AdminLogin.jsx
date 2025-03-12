@@ -62,7 +62,7 @@ const AdminLogin = () => {
                 </label>
               </div>
               
-              <a href="#" className="text-sm text-white hover:text-secondary-light">
+              <a href="/forgot-password" className="text-sm text-white hover:text-secondary-light">
                 Forgot password?
               </a>
             </div>
