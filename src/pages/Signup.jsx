@@ -30,6 +30,26 @@ const Signup = () => {
 
     setIsLoading(true);
 
+    const data ={username,email,password}
+    try {
+      const res = await fetch('http://localhost:5001/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        setResponse(result);
+        navigate("/");
+      } else {
+       alert("Unable")
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+    }
     // Here we'd normally send a request to the backend
     // For now, we'll just simulate a signup
     setTimeout(() => {
