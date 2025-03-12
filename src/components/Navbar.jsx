@@ -1,12 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useScroll from '../hooks/use-scroll';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { scrolled, scrollDirection } = useScroll();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Close menu when route changes
   useEffect(() => {
@@ -20,6 +21,10 @@ const Navbar = () => {
     { name: 'Calorie Tracking', path: '/calorie-tracking' },
     { name: 'About', path: '/about' },
   ];
+
+  const handleProfileClick = () => {
+    navigate('/login');
+  };
 
   const navbarClass = `fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out nav-glass ${
     scrolled && scrollDirection === 'down' ? '-translate-y-full' : 'translate-y-0'
@@ -52,7 +57,10 @@ const Navbar = () => {
             ))}
             
             {/* Profile Icon */}
-            <div className="h-10 w-10 rounded-full bg-white/20 border-2 border-white/50 overflow-hidden flex items-center justify-center hover:border-white transition-all">
+            <div 
+              className="h-10 w-10 rounded-full bg-white/20 border-2 border-white/50 overflow-hidden flex items-center justify-center hover:border-white transition-all cursor-pointer"
+              onClick={handleProfileClick}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
@@ -61,7 +69,10 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden">
-            <div className="h-10 w-10 rounded-full bg-white/20 border-2 border-white/50 overflow-hidden flex items-center justify-center hover:border-white transition-all mr-3">
+            <div 
+              className="h-10 w-10 rounded-full bg-white/20 border-2 border-white/50 overflow-hidden flex items-center justify-center hover:border-white transition-all mr-3 cursor-pointer"
+              onClick={handleProfileClick}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>

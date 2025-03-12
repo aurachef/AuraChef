@@ -7,6 +7,8 @@ import About from './pages/About';
 import AdminLogin from './pages/AdminLogin';
 import AddRecipe from './pages/AddRecipe';
 import CalorieTracking from './pages/CalorieTracking';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 import NotFound from './pages/NotFound';
 
 const App = () => {
@@ -20,6 +22,8 @@ const App = () => {
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/add-recipe" element={<AddRecipe />} />
           <Route path="/calorie-tracking" element={<CalorieTracking />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
