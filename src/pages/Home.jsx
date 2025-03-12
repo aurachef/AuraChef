@@ -87,14 +87,12 @@ const Home = () => {
     <div className="min-h-screen pt-24 pb-12">
       <div className="page-transition flex flex-col items-center max-w-5xl mx-auto">
 
-        <HealthBot />
+     
 
         <HealthTip />
 
         <div className="w-full max-w-4xl mb-6 mt-6">
-          <h2 className="text-2xl font-semibold mb-4 text-center">
-            Find Recipes by Ingredients
-          </h2>
+          
           <SearchBar onSearch={handleSearch} />
         </div>
 

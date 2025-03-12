@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import HealthBot from './HealthBot';
 
 const SearchBar = ({ onSearch }) => {
   const [searchValue, setSearchValue] = useState('');
@@ -19,6 +20,7 @@ const SearchBar = ({ onSearch }) => {
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-3xl mx-auto">
+      <HealthBot/>
       <div className="relative">
         <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
           <svg 

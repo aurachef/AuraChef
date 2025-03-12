@@ -7,16 +7,16 @@ const HealthBot = () => {
 
   useEffect(() => {
     // Randomly trigger animations
-    const animationInterval = setInterval(() => {
-      const rand = Math.random();
-      if (rand < 0.3) {
-        setAnimationState('wave');
-        setTimeout(() => setAnimationState('idle'), 2000);
-      } else if (rand < 0.6) {
-        setAnimationState('float');
-        setTimeout(() => setAnimationState('idle'), 3000);
-      }
-    }, 5000);
+    // const animationInterval = setInterval(() => {
+    //   const rand = Math.random();
+    //   if (rand < 0.3) {
+    //     setAnimationState('wave');
+    //     setTimeout(() => setAnimationState('idle'), 2000);
+    //   } else if (rand < 0.6) {
+    //     setAnimationState('float');
+    //     setTimeout(() => setAnimationState('idle'), 3000);
+    //   }
+    // }, 5000);
 
     return () => clearInterval(animationInterval);
   }, []);
@@ -40,7 +40,7 @@ const HealthBot = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center my-8">
+    <div className="relative flex flex-col items-start justify-center">
       {tipShown && (
         <div className="absolute -top-16 glass px-4 py-2 rounded-lg animate-fade-in">
           <p className="text-white text-sm">Hello! Ask me about health tips!</p>

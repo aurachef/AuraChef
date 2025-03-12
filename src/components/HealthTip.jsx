@@ -47,10 +47,6 @@ const HealthTip = () => {
           isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
       >
-        <div className="flex items-center space-x-2 mb-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-secondary-light" viewBox="0 0 20 20" fill="currentColor">
-          </svg>
-        </div>
         <p className="text-white">{currentTip}</p>
       </div>
     </div>
