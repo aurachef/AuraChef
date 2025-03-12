@@ -1,13 +1,40 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import HealthBot from '../components/HealthBot';
 import SearchBar from '../components/SearchBar';
 import HealthTip from '../components/HealthTip';
 
 const Home = () => {
-  const handleSearch = (searchTerm) => {
-    console.log('Searching for:', searchTerm);
-    // In a real app, this would trigger a search
+  const [searchResults, setSearchResults] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  
+  const mockRecipes = [
+    { id: 1, name: 'Banana Smoothie', ingredients: ['banana', 'milk', 'honey', 'ice'], calories: 250, prepTime: '5 min' },
+    { id: 2, name: 'Banana Pancakes', ingredients: ['banana', 'flour', 'egg', 'milk', 'baking powder'], calories: 350, prepTime: '15 min' },
+    { id: 3, name: 'Fruit Salad', ingredients: ['banana', 'apple', 'orange', 'grapes', 'yogurt'], calories: 180, prepTime: '10 min' },
+    { id: 4, name: 'Cereal with Milk', ingredients: ['milk', 'cereal', 'honey'], calories: 220, prepTime: '2 min' },
+    { id: 5, name: 'Oatmeal', ingredients: ['oats', 'milk', 'banana', 'cinnamon', 'walnuts'], calories: 300, prepTime: '10 min' },
+  ];
+
+  const handleSearch = (searchIngredients) => {
+    console.log('Searching for ingredients:', searchIngredients);
+    
+    const results = mockRecipes.map(recipe => {
+      const matchCount = searchIngredients.filter(ing => 
+        recipe.ingredients.some(recipeIng => recipeIng.includes(ing.toLowerCase()))
+      ).length;
+      
+      return { recipe, matchCount, matchPercentage: matchCount / searchIngredients.length * 100 };
+    }).filter(item => item.matchCount > 0);
+    
+    results.sort((a, b) => b.matchCount - a.matchCount);
+    
+    setSearchResults(results.map(item => ({
+      ...item.recipe,
+      matchCount: item.matchCount,
+      matchPercentage: item.matchPercentage
+    })));
+    
+    setHasSearched(true);
   };
 
   return (
@@ -25,12 +52,43 @@ const Home = () => {
 
         <HealthBot />
         
-        <SearchBar onSearch={handleSearch} />
+        <div className="w-full max-w-4xl mb-6">
+          <h2 className="text-2xl font-semibold mb-4 text-center">Find Recipes by Ingredients</h2>
+          <SearchBar onSearch={handleSearch} />
+        </div>
         
-        <HealthTip />
+        {hasSearched && (
+          <div className="w-full max-w-4xl my-8">
+            <h3 className="text-xl font-semibold mb-4">
+              {searchResults.length > 0 ? `Found ${searchResults.length} recipes` : 'No recipes found'} 
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {searchResults.map(recipe => (
+                <div key={recipe.id} className="card card-3d">
+                  <h4 className="text-lg font-semibold mb-2">{recipe.name}</h4>
+                  <p className="text-sm text-white/80 mb-2">
+                    <span className="font-medium">{recipe.calories}</span> calories | 
+                    <span className="font-medium ml-1">{recipe.prepTime}</span>
+                  </p>
+                  <div className="mb-3">
+                    <span className="text-xs font-medium bg-white/20 px-2 py-1 rounded-full">
+                      {Math.round(recipe.matchPercentage)}% match
+                    </span>
+                  </div>
+                  <p className="text-sm">
+                    <span className="font-medium">Ingredients: </span> 
+                    {recipe.ingredients.join(', ')}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {!hasSearched && <HealthTip />}
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
-          {/* Feature Cards */}
           <div className="card card-3d">
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4">

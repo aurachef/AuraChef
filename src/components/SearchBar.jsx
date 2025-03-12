@@ -7,7 +7,13 @@ const SearchBar = ({ onSearch }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (searchValue.trim()) {
-      onSearch(searchValue);
+      // Convert the search string into an array of ingredients
+      const ingredients = searchValue
+        .split(',')
+        .map(ingredient => ingredient.trim())
+        .filter(ingredient => ingredient !== '');
+      
+      onSearch(ingredients);
     }
   };
 
@@ -33,12 +39,23 @@ const SearchBar = ({ onSearch }) => {
         <input
           type="search"
           className="w-full glass py-4 pl-12 pr-4 text-white placeholder-white/70 outline-none focus:ring-2 focus:ring-white/50 transition-all duration-300"
-          placeholder="Search for food tips, recipes, calorie info..."
+          placeholder="Search recipes by ingredients (e.g., banana, milk)"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           style={{ borderRadius: "9999px" }}
         />
+        <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+          <button 
+            type="submit" 
+            className="p-1 focus:outline-none focus:shadow-outline"
+          >
+            <span className="text-white/70 hover:text-white">Search</span>
+          </button>
+        </div>
       </div>
+      <p className="text-white/70 text-sm mt-2 text-center">
+        Separate ingredients with commas for better results
+      </p>
     </form>
   );
 };

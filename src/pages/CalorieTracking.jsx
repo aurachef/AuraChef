@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import TDEECalculator from '../components/TDEECalculator';
 
 const CalorieTracking = () => {
   const [entries, setEntries] = useState([
@@ -15,6 +16,7 @@ const CalorieTracking = () => {
     time: ''
   });
 
+  const [calorieGoal, setCalorieGoal] = useState(2000);
   const totalCalories = entries.reduce((total, entry) => total + entry.calories, 0);
 
   const handleChange = (e) => {
@@ -45,6 +47,10 @@ const CalorieTracking = () => {
     setEntries(prev => prev.filter(entry => entry.id !== id));
   };
 
+  const handleCalorieGoalChange = (newGoal) => {
+    setCalorieGoal(newGoal);
+  };
+
   return (
     <div className="min-h-screen pt-24 pb-12">
       <div className="page-transition max-w-4xl mx-auto">
@@ -60,14 +66,17 @@ const CalorieTracking = () => {
           
           <div className="glass p-6 rounded-xl text-center card-3d">
             <h3 className="text-xl font-semibold mb-2">Daily Goal</h3>
-            <p className="text-4xl font-bold text-white">2,000</p>
+            <p className="text-4xl font-bold text-white">{calorieGoal}</p>
           </div>
           
           <div className="glass p-6 rounded-xl text-center card-3d">
             <h3 className="text-xl font-semibold mb-2">Remaining</h3>
-            <p className="text-4xl font-bold text-white">{2000 - totalCalories}</p>
+            <p className="text-4xl font-bold text-white">{calorieGoal - totalCalories}</p>
           </div>
         </div>
+        
+        {/* TDEE Calculator */}
+        <TDEECalculator onCalorieGoalChange={handleCalorieGoalChange} />
         
         <div className="glass p-8 rounded-2xl mb-8">
           <h2 className="text-2xl font-semibold mb-6">Add Food Entry</h2>
