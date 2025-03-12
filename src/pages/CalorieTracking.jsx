@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import TDEECalculator from '../components/TDEECalculator';
 
 const CalorieTracking = () => {
   const [entries, setEntries] = useState([
@@ -14,6 +15,9 @@ const CalorieTracking = () => {
     meal: 'Breakfast',
     time: ''
   });
+
+  const [userCalorieGoal, setUserCalorieGoal] = useState(2000);
+  const [showCalculator, setShowCalculator] = useState(false);
 
   const totalCalories = entries.reduce((total, entry) => total + entry.calories, 0);
 
@@ -45,6 +49,11 @@ const CalorieTracking = () => {
     setEntries(prev => prev.filter(entry => entry.id !== id));
   };
 
+  const handleTDEECalculationComplete = (result) => {
+    setUserCalorieGoal(result.calorieGoal);
+    setShowCalculator(false);
+  };
+
   return (
     <div className="min-h-screen pt-24 pb-12">
       <div className="page-transition max-w-4xl mx-auto">
@@ -60,14 +69,24 @@ const CalorieTracking = () => {
           
           <div className="glass p-6 rounded-xl text-center card-3d">
             <h3 className="text-xl font-semibold mb-2">Daily Goal</h3>
-            <p className="text-4xl font-bold text-white">2,000</p>
+            <p className="text-4xl font-bold text-white">{userCalorieGoal}</p>
+            <button 
+              onClick={() => setShowCalculator(!showCalculator)} 
+              className="mt-3 text-sm text-white/80 underline hover:text-white"
+            >
+              {showCalculator ? 'Hide Calculator' : 'Adjust Goal'}
+            </button>
           </div>
           
           <div className="glass p-6 rounded-xl text-center card-3d">
             <h3 className="text-xl font-semibold mb-2">Remaining</h3>
-            <p className="text-4xl font-bold text-white">{2000 - totalCalories}</p>
+            <p className="text-4xl font-bold text-white">{userCalorieGoal - totalCalories}</p>
           </div>
         </div>
+        
+        {showCalculator && (
+          <TDEECalculator onCalculationComplete={handleTDEECalculationComplete} />
+        )}
         
         <div className="glass p-8 rounded-2xl mb-8">
           <h2 className="text-2xl font-semibold mb-6">Add Food Entry</h2>
