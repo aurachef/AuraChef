@@ -5,21 +5,21 @@ const HealthBot = () => {
   const [animationState, setAnimationState] = useState('idle');
   const [tipShown, setTipShown] = useState(false);
 
-  useEffect(() => {
-    // Randomly trigger animations
-    // const animationInterval = setInterval(() => {
-    //   const rand = Math.random();
-    //   if (rand < 0.3) {
-    //     setAnimationState('wave');
-    //     setTimeout(() => setAnimationState('idle'), 2000);
-    //   } else if (rand < 0.6) {
-    //     setAnimationState('float');
-    //     setTimeout(() => setAnimationState('idle'), 3000);
-    //   }
-    // }, 5000);
+  // useEffect(() => {
+  //   Randomly trigger animations
+  //   const animationInterval = setInterval(() => {
+  //     const rand = Math.random();
+  //     if (rand < 0.3) {
+  //       setAnimationState('wave');
+  //       setTimeout(() => setAnimationState('idle'), 2000);
+  //     } else if (rand < 0.6) {
+  //       setAnimationState('float');
+  //       setTimeout(() => setAnimationState('idle'), 3000);
+  //     }
+  //   }, 5000);
 
-    return () => clearInterval(animationInterval);
-  }, []);
+  //   return () => clearInterval(animationInterval);
+  // }, []);
 
   const handleClick = () => {
     setAnimationState('wave');

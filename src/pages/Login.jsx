@@ -11,24 +11,27 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
-
-    // Here we'd normally send a request to the backend
-    // For now, we'll just simulate a login
-    setTimeout(() => {
-      setIsLoading(false);
-      if (email === 'test@example.com' && password === 'password') {
-        // Login successful
-        console.log('Login successful');
-        navigate('/');
-      } else {
-        // Login failed
-        setError('Invalid email or password');
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
       }
-    }, 1000);
-  };
+  
+      console.log("✅ Login successful:", data);
+      localStorage.setItem("token", data.token); // Save token for future requests
+      navigate('/');
+    } catch (error) {
+      console.error("❌ Login error:", error.message);
+    }  };
 
   return (
     <div className="min-h-screen pt-24 pb-12 flex items-center justify-center">

@@ -14,31 +14,46 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-
-    // Validate passwords match
+    setError(""); // Reset error state
+  
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-
-    // Validate terms agreement
+  
     if (!agreeTerms) {
       setError("You must agree to the Terms and Conditions");
       return;
     }
-
+  
     setIsLoading(true);
-
-    // Here we'd normally send a request to the backend
-    // For now, we'll just simulate a signup
-    setTimeout(() => {
-      setIsLoading(false);
-      // Signup successful
-      console.log("Signup successful");
+  
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, username, email, password }),
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Signup failed");
+      }
+  
+      console.log("Signup successful:", data);
       navigate("/");
-    }, 1000);
+  
+    } catch (error) {
+      setError(error.message); // Display the error message from the server
+    }
+  
+    setIsLoading(false);
   };
+  
+  
+  
+  
 
   return (
     <div className="min-h-screen pt-24 pb-12 flex items-center justify-center">
@@ -190,6 +205,7 @@ const Signup = () => {
               ) : null}
               {isLoading ? "Creating account..." : "Sign Up"}
             </button>
+            <br/>
           </form>
 
           <div className="mt-8 text-center">

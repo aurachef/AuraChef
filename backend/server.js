@@ -2,24 +2,25 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const authRoutes = require("./routes/auth");
+
+
 
 const app = express();
-
-// Middleware
-const authRoutes = require("./routes/authRoutes");
-app.use("/api/auth", authRoutes);
-app.use(cors());
 app.use(express.json());
+app.use(cors());
+app.use("/api/auth", authRoutes);
 
-// Routes (Temporary Test Route)
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("✅ MongoDB Connected Successfully"))
+  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
+
+// Default route
 app.get("/", (req, res) => {
-    res.send("AuraChef API is running...");
+  res.send("AuraChef Backend Running!");
 });
 
-// Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("MongoDB Connected"))
-    .catch(err => console.log(err));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
