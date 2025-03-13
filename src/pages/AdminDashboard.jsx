@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Check, X, ChevronDown, ChevronUp, RotateCw, Settings, Activity, Database } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const AdminDashboard = () => {
+  const token = localStorage.getItem('token');
   const [expandedRecipe, setExpandedRecipe] = useState(null);
   const [pendingRecipes, setPendingRecipes] = useState([
     { 
@@ -80,6 +81,32 @@ const AdminDashboard = () => {
   const toggleExpandRecipe = (recipe) => {
     setExpandedRecipe(expandedRecipe?.id === recipe.id ? null : recipe);
   };
+
+  useEffect(()=>{
+const fetchRecipes = async()=>{
+  try {
+    const response = await fetch("http://localhost:5001/api/recipe/admin", {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch recipes");
+    }
+
+    const data = await response.json();
+    setPendingRecipes(data)
+  } catch (error) {
+    console.error("❌ Error searching recipes:", error);
+  }
+
+
+}
+fetchRecipes()
+  },[])
   
   return (
     <div className="min-h-screen pt-24 pb-12">
@@ -161,7 +188,7 @@ const AdminDashboard = () => {
                           <h3 className="text-xl font-semibold">{recipe.name}</h3>
                           <div className="flex items-center space-x-2">
                             <button 
-                              onClick={() => handleApprove(recipe.id)}
+                              onClick={() => handleApprove(recipe._id)}
                               className="p-2 bg-green-500/20 rounded-full hover:bg-green-500/40 transition-colors transform hover:scale-110 active:scale-95"
                               title="Approve recipe"
                             >

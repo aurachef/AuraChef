@@ -2,15 +2,15 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User"); // Ensure you have this model
+const authCheck = require("../middleware/AuthMiddlware");
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret"; // Use environment variable in production
-
 
 router.post("/signup", async (req, res) => {
   console.log("🔹 Received signup request:", req.body); // Log request data
 
   try {
-    const { name, username, email, password } = req.body;
+    const { name, username, email, password  } = req.body;
 
     if (!name || !username || !email || !password) {
       console.log("❌ Missing fields in request body");
@@ -22,7 +22,7 @@ router.post("/signup", async (req, res) => {
     if (existingUserWithemail) {
       console.log("❌ Email already exists:", email);
       return res.status(400).json({ message: "Email already in use" });
-    }// Check if user exists
+    } // Check if user exists
     const existingUserWithUserName = await User.findOne({ username });
     if (existingUserWithUserName) {
       console.log("❌ Username already exists:", email);
@@ -31,19 +31,21 @@ router.post("/signup", async (req, res) => {
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ name, username, email, password: hashedPassword });
+    const newUser = new User({
+      name,
+      username,
+      email,
+      password: hashedPassword,
+    });
 
     await newUser.save();
     console.log("✅ User saved successfully:", newUser);
     res.status(201).json({ message: "User registered successfully!" });
-
   } catch (error) {
     console.error("❌ Signup Error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
-
 
 router.post("/login", async (req, res) => {
   console.log("🔹 Received login request:", req.body);
@@ -53,7 +55,9 @@ router.post("/login", async (req, res) => {
 
     if (!email || !password) {
       console.log("❌ Missing email or password");
-      return res.status(400).json({ message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
 
     // Find user by email
@@ -87,5 +91,10 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/verify-token", authCheck, async (req, res) => {
+  res
+    .status(200)
+    .json({ user: req.user, is_authenticated: req.is_authenticated });
+});
 
 module.exports = router;
