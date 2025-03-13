@@ -10,6 +10,10 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import NotFound from './pages/NotFound';
 import ForgotPassword from "./pages/ForgotPassword";
+import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
+import AdminDashboard from './pages/AdminDashboard';
+
 
 const App = () => {
   return (
@@ -20,10 +24,13 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/add-recipe" element={<AddRecipe />} />
           <Route path="/calorie-tracking" element={<CalorieTracking />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
         </Routes>

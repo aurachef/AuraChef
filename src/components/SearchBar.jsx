@@ -49,9 +49,9 @@ const SearchBar = ({ onSearch }) => {
         <div className="absolute inset-y-0 right-0 flex items-center pr-3">
           <button 
             type="submit" 
-            className="p-1 focus:outline-none focus:shadow-outline"
+            className=" focus:outline-none focus:shadow-outline"
           >
-            <span className="text-white/70 hover:text-white">Search</span>
+            <span className="text-white/70 hover:text-white p-2 pr-7">Search</span>
           </button>
         </div>
       </div>
