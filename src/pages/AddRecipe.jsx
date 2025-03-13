@@ -1,33 +1,76 @@
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 const AddRecipe = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [recipe, setRecipe] = useState({
-    title: '',
-    ingredients: '',
-    instructions: '',
-    prepTime: '',
-    cookTime: '',
-    servings: '',
-    calories: '',
-    image: null
+    title: "",
+    ingredients: "",
+    instructions: "",
+    prepTime: "",
+    cookTime: "",
+    servings: "",
+    caloriesPerServing: "",
+    image: null,
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setRecipe(prev => ({ ...prev, [name]: value }));
+    setRecipe((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setRecipe(prev => ({ ...prev, image: file }));
+    setRecipe((prev) => ({ ...prev, image: file }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Recipe submitted:', recipe);
-    // In a real app, this would send the recipe to a backend
+    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    for (const key in recipe) {
+      formData.append(key, recipe[key]);
+    }
+
+    try {
+      const response = await fetch("http://localhost:5001/api/recipe/create", {
+        method: "POST",
+        headers: {
+
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setRecipe({
+          title: "",
+          ingredients: "",
+          instructions: "",
+          prepTime: "",
+          cookTime: "",
+          servings: "",
+          caloriesPerServing: "",
+          image: null,
+        })
+
+        
+      } else {
+        console.error("❌ Failed to add recipe", data);
+      }
+    } catch (error) {
+      console.error("❌ Error submitting recipe", error);
+    }
   };
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen pt-24 pb-12">
@@ -35,9 +78,9 @@ const AddRecipe = () => {
         <h1 className="text-4xl font-bold text-white text-shadow text-center mb-8">
           Add New Recipe
         </h1>
-        
+
         <div className="glass p-8 rounded-2xl">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" encType="multipart/form-data">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="title" className="block text-white font-medium mb-2">
@@ -54,7 +97,7 @@ const AddRecipe = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="image" className="block text-white font-medium mb-2">
                   Recipe Image
@@ -69,8 +112,8 @@ const AddRecipe = () => {
                 />
               </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div>
                 <label htmlFor="prepTime" className="block text-white font-medium mb-2">
                   Prep Time (minutes)
@@ -85,7 +128,7 @@ const AddRecipe = () => {
                   placeholder="15"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="cookTime" className="block text-white font-medium mb-2">
                   Cook Time (minutes)
@@ -100,7 +143,7 @@ const AddRecipe = () => {
                   placeholder="30"
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="servings" className="block text-white font-medium mb-2">
                   Servings
@@ -115,23 +158,22 @@ const AddRecipe = () => {
                   placeholder="4"
                 />
               </div>
+              <div>
+                <label htmlFor="servings" className="block text-white font-medium mb-2">
+                  Calories
+                </label>
+                <input
+                  id="caloriesPerServing"
+                  name="caloriesPerServing"
+                  type="number"
+                  value={recipe.caloriesPerServing}
+                  onChange={handleChange}
+                  className="w-full glass bg-white/5 border border-white/20 px-4 py-2 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  placeholder="4"
+                />
+              </div>
             </div>
-            
-            <div>
-              <label htmlFor="calories" className="block text-white font-medium mb-2">
-                Calories per Serving
-              </label>
-              <input
-                id="calories"
-                name="calories"
-                type="number"
-                value={recipe.calories}
-                onChange={handleChange}
-                className="w-full glass bg-white/5 border border-white/20 px-4 py-2 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50"
-                placeholder="250"
-              />
-            </div>
-            
+
             <div>
               <label htmlFor="ingredients" className="block text-white font-medium mb-2">
                 Ingredients
@@ -147,7 +189,7 @@ const AddRecipe = () => {
                 required
               ></textarea>
             </div>
-            
+
             <div>
               <label htmlFor="instructions" className="block text-white font-medium mb-2">
                 Instructions
@@ -163,12 +205,9 @@ const AddRecipe = () => {
                 required
               ></textarea>
             </div>
-            
+
             <div className="flex justify-center">
-              <button
-                type="submit"
-                className="btn btn-primary btn-3d px-8"
-              >
+              <button type="submit" className="btn btn-primary btn-3d px-8">
                 Add Recipe
               </button>
             </div>

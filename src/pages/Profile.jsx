@@ -2,18 +2,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Edit2, Heart, Trash2 } from 'lucide-react';
+import { useAuth } from '../context/AuthProvider';
 
 const Profile = () => {
   const navigate = useNavigate();
   const [expandedRecipe, setExpandedRecipe] = useState(null);
-  
+  const { user, isAuthenticated, loading } = useAuth()
   // Mock user data
-  const user = {
-    username: 'JohnDoe123',
-    email: 'john.doe@example.com',
-    bio: 'Food enthusiast and home chef. I love exploring new recipes and flavors!',
-    profileImage: null
-  };
   
   // Mock user recipes (contributed)
   const contributedRecipes = [
@@ -96,7 +91,7 @@ const Profile = () => {
             
             <div className="flex-1 text-center md:text-left">
               <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold text-white">{user.username}</h1>
+                <h1 className="text-3xl font-bold text-white">{user?.username}</h1>
                 <button 
                   onClick={handleEditProfile}
                   className="inline-flex items-center gap-2 btn btn-secondary px-3 py-1 text-sm"
@@ -107,7 +102,7 @@ const Profile = () => {
               </div>
               
               {/* <p className="text-white/80 mb-4">{user.email}</p> */}
-              <p className="text-white/90">{user.bio}</p>
+              <p className="text-white/90">{user?.bio}</p>
             </div>
           </div>
         </div>

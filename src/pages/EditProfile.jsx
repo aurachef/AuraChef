@@ -2,15 +2,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Upload, X } from 'lucide-react';
-
+import { useAuth } from '../context/AuthProvider';
 const EditProfile = () => {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState({
-    username: 'JohnDoe123',
-    email: 'john.doe@example.com',
-    bio: 'Food enthusiast and home chef. I love exploring new recipes and flavors!',
-    profileImage: null
-  });
+
+   const { user, isAuthenticated, loading } = useAuth()
+  const [profile, setProfile] = useState(
+    user
+  );
   
   const [previewUrl, setPreviewUrl] = useState(null);
   

@@ -8,13 +8,8 @@ const SearchBar = ({ onSearch }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (searchValue.trim()) {
-      // Convert the search string into an array of ingredients
-      const ingredients = searchValue
-        .split(',')
-        .map(ingredient => ingredient.trim())
-        .filter(ingredient => ingredient !== '');
       
-      onSearch(ingredients);
+      onSearch(searchValue.trim());
     }
   };
 

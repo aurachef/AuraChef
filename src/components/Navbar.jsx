@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useScroll from '../hooks/use-scroll';
+import { useAuth } from '../context/AuthProvider';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { scrolled, scrollDirection } = useScroll();
   const location = useLocation();
   const navigate = useNavigate();
-
+ const { isAuthenticated } = useAuth();
   // Close menu when route changes
   useEffect(() => {
     setMenuOpen(false);
@@ -23,7 +24,8 @@ const Navbar = () => {
   ];
 
   const handleProfileClick = () => {
-    navigate('/login');
+    if(!isAuthenticated) navigate('/login');
+    navigate('/profile')
   };
 
   const navbarClass = `fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out nav-glass ${
@@ -58,7 +60,7 @@ const Navbar = () => {
             
             {/* Profile Icon */}
             <div 
-              className="h-10 w-10 rounded-full bg-white/20 border-2 border-white/50 overflow-hidden flex items-center justify-center hover:border-white transition-all cursor-pointer"
+              className="h-10 w-10 rounded-full  bg-white/20 border-2 border-white/50 overflow-hidden flex items-center justify-center hover:border-white transition-all cursor-pointer"
               onClick={handleProfileClick}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -79,7 +81,7 @@ const Navbar = () => {
             </div>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="text-white p-2 rounded-md hover:bg-white/10 transition-colors"
+              className="text-white p-2  rounded-md hover:bg-white/10 transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
