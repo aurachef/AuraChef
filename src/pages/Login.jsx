@@ -29,7 +29,6 @@ const Login = () => {
       }
 
       console.log("✅ Login successful:", data);
-
       // Store token & user info
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));

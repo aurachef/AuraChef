@@ -96,7 +96,7 @@ const Profile = () => {
             <div className="flex-1 text-center md:text-left">
               <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2">
                 <h1 className="text-3xl font-bold text-white pt-6">Welcome<br/>
-                  {user?. username}
+                  {user?.username}
                 </h1>
                 <button
                   onClick={handleEditProfile}
