@@ -11,7 +11,7 @@ const AdminDashboard = () => {
   const token = localStorage.getItem("token");
   const [expandedRecipe, setExpandedRecipe] = useState(null);
   const [pendingRecipes, setPendingRecipes] = useState([]);
-  const [loading, setLoading] = useState(true); // New loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -41,10 +41,11 @@ const AdminDashboard = () => {
 
   const handleStatusUpdate = async (recipeId, action) => {
     try {
+      const method = action === "approve" ? "PATCH" : "POST";
       const response = await fetch(
-        `http://localhost:5001/api/recipe/admin/${recipeId}/${action}`,
+        `http://localhost:5001/api/recipe/admin/${action}/${recipeId}`,
         {
-          method: "PATCH",
+          method: method,
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -52,18 +53,30 @@ const AdminDashboard = () => {
         }
       );
 
-      if (!response.ok) throw new Error(`Failed to ${action} recipe`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Failed to ${action} recipe`);
+      }
 
+      // Remove the recipe from the list after successful update
       setPendingRecipes((recipes) =>
         recipes.filter((recipe) => recipe._id !== recipeId)
       );
     } catch (error) {
-      console.error(`❌ Error ${action} recipe:`, error);
+      console.error(`❌ Error ${action}ing recipe:`, error);
+      alert(`Failed to ${action} recipe. Please try again.`);
     }
   };
 
   const toggleExpandRecipe = (recipe) => {
     setExpandedRecipe(expandedRecipe?._id === recipe._id ? null : recipe);
+  };
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return "https://images.unsplash.com/photo-1635321593217-40050ad13c74?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3";
+    // Replace backslashes with forward slashes for URL compatibility
+    const normalizedPath = imagePath.replace(/\\/g, '/');
+    return `http://localhost:5001/${normalizedPath}`;
   };
 
   return (
@@ -108,7 +121,7 @@ const AdminDashboard = () => {
                     <div className="p-4 flex flex-col md:flex-row gap-4">
                       <div
                         className="md:w-32 h-24 md:h-24 bg-cover bg-center rounded-lg"
-                        style={{ backgroundImage: `url(${recipe.image})` }}
+                        style={{ backgroundImage: `url(${getImageUrl(recipe.image)})` }}
                       ></div>
 
                       <div className="flex-1">
@@ -161,7 +174,7 @@ const AdminDashboard = () => {
                             <span className="font-medium">
                               {recipe.prepTime}
                             </span>{" "}
-                            prep
+                            min Prep
                           </p>
                         </div>
 
@@ -184,40 +197,7 @@ const AdminDashboard = () => {
                           <CollapsibleContent>
                             {expandedRecipe?._id === recipe._id && (
                               <div className="mt-4 pt-4 border-t border-white/10 animate-fade-in">
-                                <div className="grid md:grid-cols-2 gap-6">
-                                  {/* Recipe Details */}
-                                  <div>
-                                    <h4 className="font-semibold mb-2 flex items-center">
-                                      <span className="w-1.5 h-1.5 bg-primary-light rounded-full mr-2"></span>
-                                      Recipe Details
-                                    </h4>
-                                    <ul className="space-y-1 text-white/90">
-                                      <li>
-                                        <strong>Prep Time:</strong>{" "}
-                                        {recipe.prepTime} min
-                                      </li>
-                                      <li>
-                                        <strong>Cook Time:</strong>{" "}
-                                        {recipe.cookTime} min
-                                      </li>
-                                      <li>
-                                        <strong>Servings:</strong>{" "}
-                                        {recipe.servings}
-                                      </li>
-                                      <li>
-                                        <strong>Calories Per Serving:</strong>{" "}
-                                        {recipe.caloriesPerServing}
-                                      </li>
-                                      <li>
-                                        <strong>Submitted On:</strong>{" "}
-                                        {new Date(
-                                          recipe.createdAt
-                                        ).toLocaleDateString()}
-                                      </li>
-                                    </ul>
-                                  </div>
-
-                                  {/* Ingredients List */}
+                                <div className="grid md:grid-cols-3 gap-9">
                                   <div>
                                     <h4 className="font-semibold mb-2 flex items-center">
                                       <span className="w-1.5 h-1.5 bg-primary-light rounded-full mr-2"></span>
@@ -237,7 +217,6 @@ const AdminDashboard = () => {
                                     </ul>
                                   </div>
 
-                                  {/* Instructions */}
                                   <div className="md:col-span-2">
                                     <h4 className="font-semibold mb-2 flex items-center">
                                       <span className="w-1.5 h-1.5 bg-primary-light rounded-full mr-2"></span>

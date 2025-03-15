@@ -1,74 +1,75 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Edit2, Heart, Trash2, LogOut } from "lucide-react";
 import { useAuth } from "../context/AuthProvider";
 
-
 const Profile = () => {
   const navigate = useNavigate();
   const [expandedRecipe, setExpandedRecipe] = useState(null);
-  const { user, isAuthenticated, loading, logout } = useAuth();
-  //const { setUser, setIsAuthenticated } = useAuth(); // Get auth context setters
-  
+  const { user, logout } = useAuth();
+  const [favoritedRecipes, setFavoritedRecipes] = useState([]); // ✅ Add this line
 
-  // Mock user recipes (contributed)
+
+  // 🚀 **Redirect to login if not authenticated**
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  if (!user) return null; // Prevent rendering if not logged in
+
+  // Sample contributed recipes
   const contributedRecipes = [
     {
       id: 1,
       name: "Homemade Pizza",
-      ingredients: [
-        "flour",
-        "yeast",
-        "olive oil",
-        "salt",
-        "tomato sauce",
-        "cheese",
-        "toppings",
-      ],
+      ingredients: ["flour", "yeast", "olive oil", "salt", "tomato sauce", "cheese", "toppings"],
       calories: 320,
       prepTime: "30 min",
       cookTime: "15 min",
       servings: 4,
       instructions:
         "1. Mix flour, yeast, oil, and salt to make dough.\n2. Let rise for 1 hour.\n3. Roll out and add sauce, cheese, and toppings.\n4. Bake at 450°F for 12-15 minutes.",
-      image:
-        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1981&auto=format&fit=crop",
+      image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1981&auto=format&fit=crop",
     },
   ];
 
-  // Mock favorited recipes
-  const favoritedRecipes = [
-    {
-      id: 3,
-      name: "Avocado Toast",
-      ingredients: [
-        "bread",
-        "avocado",
-        "lemon juice",
-        "red pepper flakes",
-        "salt",
-        "olive oil",
-      ],
-      calories: 220,
-      prepTime: "5 min",
-      cookTime: "5 min",
-      servings: 1,
-      instructions:
-        "1. Toast bread.\n2. Mash avocado with lemon juice and salt.\n3. Spread on toast.\n4. Drizzle with olive oil and sprinkle with red pepper flakes.",
-      image:
-        "https://images.unsplash.com/photo-1525351484163-7529414344d8?q=80&w=1780&auto=format&fit=crop",
-    },
-  ];  
+  // ✅ Fetch favorited recipes
+  useEffect(() => {
+    const fetchFavoritedRecipes = async () => {
+      try {
+        const response = await fetch(`http://localhost:5001/api/favourites`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // ✅ Ensure token is included
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error("Failed to fetch favorited recipes");
+        }
+  
+        const data = await response.json();
+        setFavoritedRecipes(data); // ✅ Update state
+      } catch (error) {
+        console.error("❌ Error fetching favorited recipes:", error);
+      }
+    };
+  
+    if (user) {
+      fetchFavoritedRecipes();
+    }
+  }, [user]);
+  
 
   const handleEditProfile = () => {
     navigate("/edit-profile");
   };
 
   const handleLogout = () => {
-    logout(); // ✅ Make sure this is being called correctly
-    navigate("/login"); // Redirect after logout
+    logout(); // ✅ Call logout from context
+    navigate("/login"); // ✅ Redirect after logout
   };
-  
 
   const handleRecipeClick = (recipe) => {
     setExpandedRecipe(recipe);
@@ -78,11 +79,7 @@ const Profile = () => {
     setExpandedRecipe(null);
   };
 
-  const handleDeleteRecipe = (recipeId) => {
-    console.log(`Deleting recipe with ID: ${recipeId}`);
-    // In a real app, this would delete from the database
-  };
-
+  
   return (
     <div className="min-h-screen pt-24 pb-12">
       <div className="page-transition max-w-5xl mx-auto">
@@ -178,7 +175,7 @@ const Profile = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {favoritedRecipes.map((recipe) => (
               <div
-                key={recipe.id}
+                key={recipe._id}
                 className="card card-3d relative cursor-pointer"
                 onClick={() => handleRecipeClick(recipe)}
               >

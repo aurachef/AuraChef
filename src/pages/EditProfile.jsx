@@ -1,23 +1,27 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Upload, X } from 'lucide-react';
 import { useAuth } from '../context/AuthProvider';
+
 const EditProfile = () => {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
+  
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!user && !loading) {
+      navigate('/login');
+    }
+  }, [user, loading, navigate]);
 
-   const { user, loading } = useAuth()
-  const [profile, setProfile] = useState(
-    user
-  );
-  
+  const [profile, setProfile] = useState(user);
   const [previewUrl, setPreviewUrl] = useState(null);
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile(prev => ({ ...prev, [name]: value }));
   };
-  
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -31,18 +35,20 @@ const EditProfile = () => {
       reader.readAsDataURL(file);
     }
   };
-  
+
   const removeImage = () => {
     setProfile(prev => ({ ...prev, profileImage: null }));
     setPreviewUrl(null);
   };
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Profile updated:', profile);
     // In a real app, this would update the database
     navigate('/profile');
   };
+
+  if (!user) return null; // Prevents rendering if user is null
   
   return (
     <div className="min-h-screen pt-24 pb-12">

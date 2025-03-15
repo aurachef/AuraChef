@@ -1,27 +1,35 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
+import { jwtDecode } from "jwt-decode";
 
-export const AuthContext = createContext(); // ✅ Export AuthContext properly
-// Custom Hook for using AuthContext
-export const useAuth = () => useContext(AuthContext); // ✅ Returns all auth functions
+export const AuthContext = createContext();
+export const useAuth = () => useContext(AuthContext);
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const token = localStorage.getItem("token");
+    return token ? jwtDecode(token) : null; // Load user from localStorage
+  });
 
   useEffect(() => {
-    // Simulating fetching user data from local storage or API
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      setUser(storedUser);
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setUser(decoded); // ✅ Persist user session
+      } catch (error) {
+        console.error("Invalid token:", error);
+        logout();
+      }
     }
   }, []);
 
-  const login = (userData) => {
-    localStorage.setItem("user", JSON.stringify(userData));
-    setUser(userData);
+  const login = (token) => {
+    localStorage.setItem("token", token);
+    setUser(jwtDecode(token));
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
   };
 
@@ -32,4 +40,4 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-export default AuthProvider; // ✅ Default export
+export default AuthProvider;

@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require("uuid");
 const path = require("path");
 const authCheck = require("../middleware/AuthMiddleware");
 const Rating = require("../models/Rating");
-const adminAuthCheck = require("../middleware/AuthMiddlwareAdmin");
+const adminAuthCheck = require("../middleware/AuthMiddlewareAdmin");
 
 // Multer storage configuration
 const fileStorage = multer.diskStorage({
@@ -160,21 +160,35 @@ router.get("/admin", async (req, res) => {
 });
 
 
-router.post("/admin/approve/:id", adminAuthCheck, async (req, res) => {
+// Approve Recipe
+router.patch("/admin/approve/:id", adminAuthCheck, async (req, res) => {
   try {
-    const recipeId = req.params.id;
+    const { id: recipeId } = req.params;
 
-    const updatedRecipe = await Recipe.findByIdAndUpdate(
-      recipeId,
-      { status: "approved" },
-      { new: true } // This returns the updated recipe
-    );
+    // Validate recipe ID format
+    if (!recipeId.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: "Invalid recipe ID format" });
+    }
 
-    if (!updatedRecipe) {
+    // Check if recipe exists
+    const recipe = await Recipe.findById(recipeId);
+    if (!recipe) {
       return res.status(404).json({ message: "Recipe not found" });
     }
 
-    res.status(200).json(updatedRecipe);
+    // Check if recipe is already approved
+    if (recipe.status === "approved") {
+      return res.status(400).json({ message: "Recipe is already approved" });
+    }
+
+    // Update status to "approved"
+    recipe.status = "approved";
+    await recipe.save();
+
+    res.status(200).json({
+      message: "Recipe approved successfully",
+      recipe,
+    });
   } catch (error) {
     console.error("❌ Error approving recipe:", error);
     res.status(500).json({ message: "Internal server error" });

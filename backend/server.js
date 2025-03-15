@@ -5,6 +5,7 @@ const cors = require("cors");
 const authRoutes = require("./routes/auth");
 const recipeRoutes = require("./routes/recipe");
 const ratingRoutes = require("./routes/rating");
+const favouritesRoutes = require("./routes/favourites");
 const path = require("path");
 
 
@@ -17,6 +18,7 @@ app.use(cors());
 app.use("/api/auth", authRoutes);
 app.use("/api/recipe", recipeRoutes);
 app.use("/api/rating", ratingRoutes);
+app.use("/api/favourites", favouritesRoutes);
 
 // Connect to MongoDB
 mongoose
@@ -29,5 +31,5 @@ app.get("/", (req, res) => {
   res.send("AuraChef Backend Running!");
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

@@ -1,14 +1,15 @@
-
-import React, { useState } from 'react';
-import { Link, replace, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../context/AuthProvider"; // ✅ Import Auth Context
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth(); // ✅ Use global auth context
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,24 +31,29 @@ const Login = () => {
 
       console.log("✅ Login successful:", data);
 
-      // Store token & user info
+      // Store only the token in localStorage
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Check if the user is an admin
-      if (data.user.isAdmin) {
-        // alert("✅ You are an admin, redirecting to Admin Dashboard...");
+      // Decode user details from the token
+      const decodedUser = jwtDecode(data.token);
+      console.log("Decoded User:", decodedUser);
+
+      // ✅ Update Auth Context so other pages recognize login
+      login(data.token);
+
+      // ✅ Redirect based on role (with error handling)
+      if (decodedUser.isAdmin) {
         navigate("/admin-dashboard");
       } else {
         navigate("/profile");
       }
-
     } catch (error) {
       setError(error.message);
     }
 
     setIsLoading(false);
   };
+
   return (
     <div className="min-h-screen pt-24 pb-12 flex items-center justify-center">
       <div className="w-full max-w-md">
@@ -65,7 +71,9 @@ const Login = () => {
 
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
-              <label htmlFor="email" className="block text-white font-medium mb-2">Email</label>
+              <label htmlFor="email" className="block text-white font-medium mb-2">
+                Email
+              </label>
               <input
                 type="email"
                 id="email"
@@ -80,9 +88,7 @@ const Login = () => {
             <div className="mb-6">
               <div className="flex justify-between items-center mb-2">
                 <label htmlFor="password" className="text-white font-medium">Password</label>
-                <a href="/forgot-password" className="text-white-400" 
-                //className="text-secondary-light hover:text-white text-sm transition-colors"
-                >
+                <a href="/forgot-password" className="text-white-400">
                   Forgot password?
                 </a>
               </div>
@@ -95,17 +101,6 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-            </div>
-
-            <div className="flex items-center mb-6">
-              <input
-                type="checkbox"
-                id="remember"
-                className="mr-2 h-4 w-4"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              />
-              <label htmlFor="remember" className="text-white">Remember me</label>
             </div>
 
             <button
@@ -130,13 +125,13 @@ const Login = () => {
                   ></path>
                 </svg>
               ) : null}
-              {isLoading ? 'Logging in...' : 'Log In'}
+              {isLoading ? "Logging in..." : "Log In"}
             </button>
           </form>
 
           <div className="mt-8 text-center">
             <p className="text-white">
-              Don't have an account?{' '}
+              Don't have an account?{" "}
               <Link to="/signup" className="text-secondary-light hover:text-white transition-colors">
                 Sign up
               </Link>
