@@ -252,4 +252,19 @@ router.get("/incredients", async (req, res) => {
   }
 });
 
+// Get approved recipes for a specific user
+router.get("/user/approved", authCheck, async (req, res) => {
+  try {
+    const recipes = await Recipe.find({
+      userId: req.user._id,
+      status: "approved"
+    });
+    
+    res.status(200).json(recipes);
+  } catch (error) {
+    console.error("❌ Error fetching user's approved recipes:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;

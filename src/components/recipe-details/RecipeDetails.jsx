@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Heart, Star } from "lucide-react";
+import { Heart, Star, X } from "lucide-react";
 
 function RecipeDetails({ expandedRecipe, handleCloseExpanded }) {
   const token = localStorage.getItem("token");
@@ -9,7 +9,6 @@ function RecipeDetails({ expandedRecipe, handleCloseExpanded }) {
   useEffect(() => {
     if (!expandedRecipe || !expandedRecipe._id || !token) return;
 
-    // ✅ Fetch Recipe Details (including average rating)
     const fetchRecipeDetails = async () => {
       try {
         const response = await fetch(
@@ -34,7 +33,6 @@ function RecipeDetails({ expandedRecipe, handleCloseExpanded }) {
       }
     };
 
-    // ✅ Fetch Favorite Status
     const fetchFavoriteStatus = async () => {
       try {
         const response = await fetch(
@@ -62,7 +60,6 @@ function RecipeDetails({ expandedRecipe, handleCloseExpanded }) {
     fetchFavoriteStatus();
   }, [expandedRecipe, token]);
 
-  // ✅ Handle Rating Change
   const handleRatingChange = async (rating) => {
     if (!token) {
       alert("You must be logged in to rate!");
@@ -95,7 +92,6 @@ function RecipeDetails({ expandedRecipe, handleCloseExpanded }) {
     }
   };
 
-  // ✅ Handle Favorite Toggle
   const handleFavoriteToggle = async () => {
     if (!token) {
       alert("You must be logged in to favorite recipes!");
@@ -130,46 +126,56 @@ function RecipeDetails({ expandedRecipe, handleCloseExpanded }) {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 animate-fade-in">
       <div
-        className="absolute inset-0 bg-black bg-opacity-70"
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
         onClick={handleCloseExpanded}
       ></div>
-      <div className="glass p-6 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative z-10">
+      <div className="bg-gradient-to-br from-purple-900/90 to-indigo-900/90 backdrop-blur-xl p-6 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative z-10 border border-white/20 shadow-2xl">
         <button
-          className="absolute top-4 right-4 text-white hover:text-white/80 transition-colors"
+          className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
           onClick={handleCloseExpanded}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <X className="h-6 w-6" />
         </button>
 
         <div className="flex flex-col md:flex-row gap-6">
           <div className="md:w-1/2">
-            <img
-              src={"http://localhost:5001/" + expandedRecipe.image}
-              alt={expandedRecipe.title}
-              className="w-full h-64 object-cover rounded-lg"
-            />
+            <div className="rounded-lg overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-300">
+              <img
+                src={"http://localhost:5001/" + expandedRecipe.image}
+                alt={expandedRecipe.title}
+                className="w-full h-64 object-cover"
+              />
+            </div>
           </div>
           <div className="md:w-1/2">
-            <h2 className="text-2xl font-bold mb-2">{expandedRecipe.title}</h2>
+            <h2 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">
+              {expandedRecipe.title}
+            </h2>
+
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-white/5 p-3 rounded-lg backdrop-blur-sm border border-white/10">
+                <p className="text-sm text-white/60">Prep Time</p>
+                <p className="font-medium">{expandedRecipe.prepTime} min</p>
+              </div>
+              <div className="bg-white/5 p-3 rounded-lg backdrop-blur-sm border border-white/10">
+                <p className="text-sm text-white/60">Cook Time</p>
+                <p className="font-medium">{expandedRecipe.cookTime} min</p>
+              </div>
+              <div className="bg-white/5 p-3 rounded-lg backdrop-blur-sm border border-white/10">
+                <p className="text-sm text-white/60">Servings</p>
+                <p className="font-medium">{expandedRecipe.servings}</p>
+              </div>
+              <div className="bg-white/5 p-3 rounded-lg backdrop-blur-sm border border-white/10">
+                <p className="text-sm text-white/60">Calories</p>
+                <p className="font-medium">{expandedRecipe.caloriesPerServing}/serving</p>
+              </div>
+            </div>
 
             <div className="flex items-center space-x-4 mb-4">
               <button
                 className={`p-2 rounded-full ${
                   favorited ? "bg-white/20" : "bg-white/10"
-                } transition-colors`}
+                } transition-colors hover:bg-white/30`}
                 onClick={handleFavoriteToggle}
               >
                 <Heart
@@ -179,12 +185,12 @@ function RecipeDetails({ expandedRecipe, handleCloseExpanded }) {
                 />
               </button>
 
-              <div className="flex">
+              <div className="flex bg-white/5 p-2 rounded-lg backdrop-blur-sm border border-white/10">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
                     onClick={() => handleRatingChange(star)}
-                    className="focus:outline-none"
+                    className="focus:outline-none px-1 transition-transform hover:scale-110"
                   >
                     <Star
                       className={`h-5 w-5 ${
@@ -197,42 +203,36 @@ function RecipeDetails({ expandedRecipe, handleCloseExpanded }) {
                 ))}
               </div>
             </div>
-
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <p className="text-sm text-white/70">Prep Time</p>
-                <p className="font-medium">{expandedRecipe.prepTime}</p>
-              </div>
-              <div>
-                <p className="text-sm text-white/70">Cook Time</p>
-                <p className="font-medium">{expandedRecipe.cookTime}</p>
-              </div>
-              <div>
-                <p className="text-sm text-white/70">Servings</p>
-                <p className="font-medium">{expandedRecipe.servings}</p>
-              </div>
-              <div>
-                <p className="text-sm text-white/70">Calories</p>
-                <p className="font-medium">
-                  {expandedRecipe.caloriesPerServing} per serving
-                </p>
-              </div>
-            </div>
           </div>
         </div>
 
-        <div className="mt-6">
-          <h3 className="text-xl font-semibold mb-2">Ingredients</h3>
-          <ul className="list-disc pl-5 mb-4 space-y-1">
-            {expandedRecipe.ingredients.map((ingredient, index) => (
-              <li key={index}>{ingredient}</li>
-            ))}
-          </ul>
+        <div className="mt-8 space-y-6">
+          <div className="bg-white/5 p-4 rounded-xl backdrop-blur-sm border border-white/10">
+            <h3 className="text-xl font-semibold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">
+              Ingredients
+            </h3>
+            <ul className="list-disc pl-5 space-y-1">
+              {expandedRecipe.ingredients.map((ingredient, index) => (
+                <li key={index} className="text-white/90">{ingredient}</li>
+              ))}
+            </ul>
+          </div>
 
-          <h3 className="text-xl font-semibold mb-2">Instructions</h3>
-          <p className="whitespace-pre-line">
-            {expandedRecipe.instructions.join(", ")}
-          </p>
+          <div className="bg-white/5 p-4 rounded-xl backdrop-blur-sm border border-white/10">
+            <h3 className="text-xl font-semibold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">
+              Instructions
+            </h3>
+            <div className="space-y-3">
+              {expandedRecipe.instructions.map((instruction, index) => (
+                <div key={index} className="flex gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-sm">
+                    {index + 1}
+                  </span>
+                  <p className="text-white/90">{instruction}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

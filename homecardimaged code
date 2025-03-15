@@ -4,7 +4,7 @@ import HealthBot from "../components/HealthBot";
 import SearchBar from "../components/SearchBar";
 import HealthTip from "../components/HealthTip";
 import RecipeDetails from "../components/recipe-details/RecipeDetails";
-import { Clock, Flame, Percent, ClipboardList, BarChart3, Zap } from "lucide-react";
+import { Clock, Flame, Percent } from "lucide-react";
 
 const Home = () => {
   const [searchResults, setSearchResults] = useState([]);
@@ -60,7 +60,7 @@ const Home = () => {
 
         {hasSearched && (
           <div className="w-full max-w-4xl my-8">
-            <h3 className="text-2xl font-bold mb-6 text-white/90">
+            <h3 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">
               {searchResults.length > 0 ? `Found ${searchResults.length} recipes` : 'No recipes found'} 
             </h3>
             
@@ -71,19 +71,25 @@ const Home = () => {
                   className="bg-gradient-to-br from-purple-900/40 to-indigo-900/40 backdrop-blur-xl p-4 rounded-xl border border-white/10 shadow-xl hover:shadow-purple-500/10 cursor-pointer transform transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1"
                   onClick={() => handleRecipeClick(recipe)}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-lg font-semibold text-white">
-                      {recipe.title}
-                    </h4>
-                    <div className="bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full">
+                  <div className="relative mb-4 rounded-lg overflow-hidden">
+                    <img
+                      src={`http://localhost:5001/${recipe.image}`}
+                      alt={recipe.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-full">
                       <div className="flex items-center gap-1">
                         <Percent className="w-4 h-4" />
                         <span className="text-sm font-medium">
-                          {Math.round(recipe.matchPercentage)}%
+                          {Math.round(recipe.matchPercentage)}% match
                         </span>
                       </div>
                     </div>
                   </div>
+
+                  <h4 className="text-lg font-semibold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">
+                    {recipe.title}
+                  </h4>
 
                   <div className="flex gap-4 mb-3">
                     <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg backdrop-blur-sm">
@@ -110,48 +116,87 @@ const Home = () => {
         )}
 
         {!hasSearched && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-            <div className="group relative bg-white/5 backdrop-blur-xl p-8 rounded-2xl border border-white/10 shadow-xl overflow-hidden flex flex-col items-center text-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="w-16 h-16 mb-6 rounded-2xl bg-gradient-to-br from-purple-500/30 to-pink-500/30 p-4 border border-white/20 flex items-center justify-center">
-                  <ClipboardList className="w-full h-full text-white" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
+            <div className="bg-gradient-to-br from-purple-900/40 to-indigo-900/40 backdrop-blur-xl p-6 rounded-xl border border-white/10 shadow-xl transform transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center mb-4 shadow-inner">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8 text-purple-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-white">
+                <h3 className="text-xl font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">
                   Health Recipes
                 </h3>
-                <p className="text-white/80 leading-relaxed">
-                  Discover delicious and nutritious recipes tailored to your dietary preferences.
+                <p className="text-white/80">
+                  Discover delicious and nutritious recipes tailored to your
+                  dietary preferences.
                 </p>
               </div>
             </div>
 
-            <div className="group relative bg-white/5 backdrop-blur-xl p-8 rounded-2xl border border-white/10 shadow-xl overflow-hidden flex flex-col items-center text-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="w-16 h-16 mb-6 rounded-2xl bg-gradient-to-br from-purple-500/30 to-pink-500/30 p-4 border border-white/20 flex items-center justify-center">
-                  <BarChart3 className="w-full h-full text-white" />
+            <div className="bg-gradient-to-br from-purple-900/40 to-indigo-900/40 backdrop-blur-xl p-6 rounded-xl border border-white/10 shadow-xl transform transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center mb-4 shadow-inner">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8 text-purple-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                    />
+                  </svg>
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-white">
+                <h3 className="text-xl font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">
                   Calorie Tracking
                 </h3>
-                <p className="text-white/80 leading-relaxed">
-                  Track your daily calorie intake and get insights to maintain a balanced diet.
+                <p className="text-white/80">
+                  Track your daily calorie intake and get insights to maintain a
+                  balanced diet.
                 </p>
               </div>
             </div>
 
-            <div className="group relative bg-white/5 backdrop-blur-xl p-8 rounded-2xl border border-white/10 shadow-xl overflow-hidden flex flex-col items-center text-center">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 to-pink-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <div className="relative z-10 flex flex-col items-center">
-                <div className="w-16 h-16 mb-6 rounded-2xl bg-gradient-to-br from-purple-500/30 to-pink-500/30 p-4 border border-white/20 flex items-center justify-center">
-                  <Zap className="w-full h-full text-white" />
+            <div className="bg-gradient-to-br from-purple-900/40 to-indigo-900/40 backdrop-blur-xl p-6 rounded-xl border border-white/10 shadow-xl transform transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center mb-4 shadow-inner">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8 text-purple-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
+                  </svg>
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-white">
+                <h3 className="text-xl font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300">
                   Quick Tips
                 </h3>
-                <p className="text-white/80 leading-relaxed">
-                  Get instant health and nutrition tips to improve your daily habits.
+                <p className="text-white/80">
+                  Get instant health and nutrition tips to improve your daily
+                  habits.
                 </p>
               </div>
             </div>
