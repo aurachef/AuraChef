@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -13,7 +13,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
 import AdminDashboard from "./pages/AdminDashboard";
-import { AuthProvider } from "./context/AuthProvider";
+import AuthProvider, { useAuth } from "./context/AuthProvider"; // ✅ Correct import
 
 const App = () => {
   return (
@@ -25,7 +25,6 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/admin-login" element={<AdminLogin />} />
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
             <Route path="/add-recipe" element={<AddRecipe />} />
             <Route path="/calorie-tracking" element={<CalorieTracking />} />
             <Route path="/login" element={<Login />} />
@@ -34,11 +33,23 @@ const App = () => {
             <Route path="/edit-profile" element={<EditProfile />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+
+            {/* ✅ Protect Admin Dashboard Route */}
+            <Route
+              path="/admin-dashboard"
+              element={<ProtectedAdminRoute />}
+            />
           </Routes>
         </div>
       </BrowserRouter>
     </AuthProvider>
   );
+};
+
+// ✅ Protected Route Component
+const ProtectedAdminRoute = () => {
+  const { user } = useAuth(); // ✅ Access user from AuthContext
+  return user?.isAdmin ? <AdminDashboard /> : <Navigate to="/profile" replace />;
 };
 
 export default App;

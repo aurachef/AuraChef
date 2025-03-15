@@ -1,15 +1,52 @@
-
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempt:', { email, password });
-    // In a real app, this would handle authentication
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5001/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      // Check if user is an admin
+      if (!data.user.isAdmin) {
+        throw new Error("❌ You are not an admin!");
+      }
+
+      console.log("✅ Admin login successful:", data);
+
+      // Store token & admin details
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // Redirect to admin dashboard
+      navigate("/admin-dashboard");
+    } catch (error) {
+      setError(error.message);
+    }
+
+    setIsLoading(false);
   };
+
+
 
   return (
     <div className="min-h-screen pt-24 pb-12 flex flex-col items-center justify-center">

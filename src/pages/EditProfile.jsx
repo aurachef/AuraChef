@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthProvider';
 const EditProfile = () => {
   const navigate = useNavigate();
 
-   const { user, isAuthenticated, loading } = useAuth()
+   const { user, loading } = useAuth()
   const [profile, setProfile] = useState(
     user
   );

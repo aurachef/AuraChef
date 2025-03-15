@@ -16,63 +16,6 @@ const Home = () => {
   const [expandedRecipe, setExpandedRecipe] = useState(null);
 
   const navigate = useNavigate();
-  const mockRecipes = [
-    { 
-      id: 1, 
-      name: 'Banana Smoothie', 
-      ingredients: ['banana', 'milk', 'honey', 'ice'], 
-      calories: 250, 
-      prepTime: '5 min',
-      cookTime: '0 min',
-      servings: 2,
-      instructions: 'Add all ingredients to a blender. Blend until smooth. Pour into glasses and serve immediately.',
-      image: 'https://images.unsplash.com/photo-1589734435872-e344bb56e602?q=80&w=1887&auto=format&fit=crop'
-    },
-    { 
-      id: 2, 
-      name: 'Banana Pancakes', 
-      ingredients: ['banana', 'flour', 'egg', 'milk', 'baking powder'], 
-      calories: 350, 
-      prepTime: '15 min',
-      cookTime: '10 min',
-      servings: 4,
-      instructions: 'Mash bananas in a bowl. Add remaining ingredients and mix well. Heat a pan over medium heat. Pour 1/4 cup batter for each pancake. Cook until bubbles form, then flip and cook other side. Serve warm with maple syrup.',
-      image: 'https://images.unsplash.com/photo-1575853121743-60c24f0a7502?q=80&w=1964&auto=format&fit=crop'
-    },
-    { 
-      id: 3, 
-      name: 'Fruit Salad', 
-      ingredients: ['banana', 'apple', 'orange', 'grapes', 'yogurt'], 
-      calories: 180, 
-      prepTime: '10 min',
-      cookTime: '0 min',
-      servings: 3,
-      instructions: 'Wash all fruit. Peel and chop banana, apple, and orange. Mix all fruit in a bowl. Top with yogurt. Serve chilled.',
-      image: 'https://images.unsplash.com/photo-1568948980600-950f7863c114?q=80&w=2070&auto=format&fit=crop'
-    },
-    { 
-      id: 4, 
-      name: 'Cereal with Milk', 
-      ingredients: ['milk', 'cereal', 'honey'], 
-      calories: 220, 
-      prepTime: '2 min',
-      cookTime: '0 min',
-      servings: 1,
-      instructions: 'Pour cereal into a bowl. Add milk. Drizzle with honey. Enjoy!',
-      image: 'https://images.unsplash.com/photo-1521483451396-8a3e8697332d?q=80&w=1925&auto=format&fit=crop'
-    },
-    { 
-      id: 5, 
-      name: 'Oatmeal', 
-      ingredients: ['oats', 'milk', 'banana', 'cinnamon', 'walnuts'], 
-      calories: 300, 
-      prepTime: '5 min',
-      cookTime: '5 min',
-      servings: 1,
-      instructions: 'In a pot, combine oats and milk. Bring to a simmer over medium heat. Cook for 5 minutes, stirring occasionally. Remove from heat, transfer to a bowl. Top with sliced banana, sprinkle with cinnamon and walnuts.',
-      image: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?q=80&w=1887&auto=format&fit=crop'
-    },
-  ];
 
   const handleSearch = async (searchIngredients) => {
     console.log('Searching for ingredients:', searchIngredients);

@@ -4,7 +4,7 @@ const Recipe = require("../models/Recipe");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
-const authCheck = require("../middleware/AuthMiddlware");
+const authCheck = require("../middleware/AuthMiddleware");
 const Rating = require("../models/Rating");
 const adminAuthCheck = require("../middleware/AuthMiddlwareAdmin");
 
@@ -136,7 +136,7 @@ router.post("/search", async (req, res) => {
       const matchedCount = recipe.ingredients.filter(ing => searchIngredients.includes(ing)).length;
       const matchPercentage = (matchedCount / recipe.ingredients.length) * 100;
       return { ...recipe.toObject(), matchPercentage };
-    }).filter(recipe => recipe.matchPercentage > 50)
+    }).filter(recipe => recipe.matchPercentage > 40)
       .sort((a, b) => b.matchPercentage - a.matchPercentage);
 
     res.status(200).json(matchedRecipes);
@@ -147,7 +147,7 @@ router.post("/search", async (req, res) => {
 });
 
 
-router.get("/admin",adminAuthCheck, async (req, res) => {
+router.get("/admin", async (req, res) => {
   try {
     const recipes = await Recipe.find({status: { $ne: "approved" }}).populate("userId");
    

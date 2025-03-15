@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Rating = require("../models/Rating");
-const authCheck = require("../middleware/AuthMiddlware");
+const authCheck = require("../middleware/AuthMiddleware");
 
 // Add a new rating
 router.post("/rate", authCheck, async (req, res) => {

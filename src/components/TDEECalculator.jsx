@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 
-const TDEECalculator = ({ onCalorieGoalChange }) => {
+const TDEECalculator = ({ onCalorieGoalChange, onUserMetricsChange }) => {
+  
   const [userDetails, setUserDetails] = useState({
     age: '',
     weight: '',
@@ -34,6 +35,15 @@ const TDEECalculator = ({ onCalorieGoalChange }) => {
     const { name, value } = e.target;
     setUserDetails(prev => ({ ...prev, [name]: value }));
   };
+
+  useEffect(() => {
+    if (userDetails.weight && userDetails.height) {
+      onUserMetricsChange?.({
+        weight: parseFloat(userDetails.weight),
+        height: parseFloat(userDetails.height)
+      });
+    }
+  }, [userDetails.weight, userDetails.height, onUserMetricsChange]);
 
   const calculateBMR = () => {
     const { age, weight, height, gender } = userDetails;
@@ -75,6 +85,13 @@ const TDEECalculator = ({ onCalorieGoalChange }) => {
     // Notify parent component
     if (onCalorieGoalChange) {
       onCalorieGoalChange(calculatedCalorieGoal);
+    }
+
+    if (onUserMetricsChange) {
+      onUserMetricsChange({
+        weight: parseFloat(userDetails.weight),
+        height: parseFloat(userDetails.height)
+      });
     }
   };
 

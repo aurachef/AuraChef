@@ -34,8 +34,14 @@ const Login = () => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Redirect to profile page
-      navigate("/profile");
+      // Check if the user is an admin
+      if (data.user.isAdmin) {
+        // alert("✅ You are an admin, redirecting to Admin Dashboard...");
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/profile");
+      }
+
     } catch (error) {
       setError(error.message);
     }

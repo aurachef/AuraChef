@@ -2,14 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useScroll from '../hooks/use-scroll';
-import { useAuth } from '../context/AuthProvider';
+import { useAuth } from "../context/AuthProvider"; // ✅ Import useAuth correctly
+
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { scrolled, scrollDirection } = useScroll();
   const location = useLocation();
   const navigate = useNavigate();
- const { isAuthenticated } = useAuth();
+ //const { isAuthenticated } = useAuth();
+ 
+ const { user } = useAuth(); // ✅ Get user data from AuthProvider
   // Close menu when route changes
   useEffect(() => {
     setMenuOpen(false);
@@ -17,16 +20,25 @@ const Navbar = () => {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Admin Login', path: '/admin-login' },
+    // { name: 'Admin Login', path: '/admin-login' },
+    //{ name: 'Dashboard', path: '/admin-dashboard' },
     { name: 'Add Recipe', path: '/add-recipe' },
     { name: 'Calorie Tracking', path: '/calorie-tracking' },
     { name: 'About', path: '/about' },
   ];
+  // If user is admin, add Admin Dashboard link
+  if (user?.isAdmin) {
+    navLinks.push({ name: "Dashboard", path: "/admin-dashboard" });
+  }
 
   const handleProfileClick = () => {
-    if(!isAuthenticated) navigate('/login');
-    navigate('/profile')
+    if (user) {
+      navigate('/profile'); // ✅ Go to profile if user is logged in
+    } else {
+      navigate('/login'); // ✅ Go to login if user is not logged in
+    }
   };
+  
 
   const navbarClass = `fixed top-0 left-0 w-full z-50 transition-all duration-300 ease-in-out nav-glass ${
     scrolled && scrollDirection === 'down' ? '-translate-y-full' : 'translate-y-0'
