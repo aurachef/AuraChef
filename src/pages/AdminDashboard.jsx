@@ -108,7 +108,7 @@ const AdminDashboard = () => {
                     <div className="p-4 flex flex-col md:flex-row gap-4">
                       <div
                         className="md:w-32 h-24 md:h-24 bg-cover bg-center rounded-lg"
-                        style={{ backgroundImage: `url(${recipe.image})` }}
+                        style={{ backgroundImage: `url(${'http://localhost:5001/'+recipe.image})` }}
                       ></div>
 
                       <div className="flex-1">
