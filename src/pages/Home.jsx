@@ -18,6 +18,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   const handleSearch = async (searchIngredients) => {
+    
     console.log('Searching for ingredients:', searchIngredients);
     try {
       const response = await fetch("http://localhost:5001/api/recipe/search", {

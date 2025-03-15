@@ -21,7 +21,7 @@ const AuthProvider = ({ children }) => {
         logout();
       }
     }
-  }, []);
+  }, [location.pathname]);
 
   const login = (token) => {
     localStorage.setItem("token", token);

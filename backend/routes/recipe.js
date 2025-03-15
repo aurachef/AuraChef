@@ -36,17 +36,26 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: fileStorage, fileFilter });
 
 // Create a new recipe
-router.post("/create",authCheck, upload.single("image"), async (req, res) => {
+router.post("/create", authCheck, upload.single("image"), async (req, res) => {
   try {
-    const { title, ingredients, instructions, prepTime, cookTime, servings, calories,caloriesPerServing=2 } = req.body;
+    const {
+      title,
+      ingredients,
+      instructions,
+      prepTime,
+      cookTime,
+      servings,
+      calories,
+      caloriesPerServing = 2,
+    } = req.body;
 
     const image = req.file ? req.file.path : null;
 
     const recipe = new Recipe({
-      userId:req.user._id,
+      userId: req.user._id,
       title,
-      ingredients:ingredients.split(','),
-      instructions:instructions.split(','),
+      ingredients: ingredients.split(","),
+      instructions: instructions.split(","),
       prepTime,
       cookTime,
       servings,
@@ -84,7 +93,12 @@ router.get("/details/:id", async (req, res) => {
     }
 
     const ratings = await Rating.find({ recipeId: req.params.id });
-    const averageRating = ratings.length > 0 ? (ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length).toFixed(1) : 0;
+    const averageRating =
+      ratings.length > 0
+        ? (
+            ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
+          ).toFixed(1)
+        : 0;
 
     res.status(200).json({ ...recipe.toObject(), averageRating });
   } catch (error) {
@@ -124,19 +138,24 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
-
-
 router.post("/search", async (req, res) => {
   try {
     const { ingredients } = req.body;
-    const searchIngredients = ingredients.split(',').map(ing => ing.trim().toLowerCase());
+    const searchIngredients = ingredients
+      .split(",")
+      .map((ing) => ing.trim().toLowerCase());
 
-    const recipes = await Recipe.find({status:"approved"});
-    const matchedRecipes = recipes.map(recipe => {
-      const matchedCount = recipe.ingredients.filter(ing => searchIngredients.includes(ing)).length;
-      const matchPercentage = (matchedCount / recipe.ingredients.length) * 100;
-      return { ...recipe.toObject(), matchPercentage };
-    }).filter(recipe => recipe.matchPercentage > 40)
+    const recipes = await Recipe.find({ status: "approved" });
+    const matchedRecipes = recipes
+      .map((recipe) => {
+        const matchedCount = recipe.ingredients.filter((ing) =>
+          searchIngredients.includes(ing)
+        ).length;
+        const matchPercentage =
+          (matchedCount / recipe.ingredients.length) * 100;
+        return { ...recipe.toObject(), matchPercentage };
+      })
+      .filter((recipe) => recipe.matchPercentage > 40)
       .sort((a, b) => b.matchPercentage - a.matchPercentage);
 
     res.status(200).json(matchedRecipes);
@@ -146,11 +165,11 @@ router.post("/search", async (req, res) => {
   }
 });
 
-
 router.get("/admin", async (req, res) => {
   try {
-    const recipes = await Recipe.find({status: { $ne: "approved" }}).populate("userId");
-   
+    const recipes = await Recipe.find({ status: { $ne: "approved" } }).populate(
+      "userId"
+    );
 
     res.status(200).json(recipes);
   } catch (error) {
@@ -195,8 +214,6 @@ router.patch("/admin/approve/:id", adminAuthCheck, async (req, res) => {
   }
 });
 
-
-
 router.post("/admin/reject/:id", adminAuthCheck, async (req, res) => {
   try {
     const recipeId = req.params.id;
@@ -218,6 +235,21 @@ router.post("/admin/reject/:id", adminAuthCheck, async (req, res) => {
   }
 });
 
+router.get("/incredients", async (req, res) => {
+  try {
+    const ingredients = await Recipe.aggregate([
+      { $match: { status: "approved" } }, // Filter approved recipes
+      { $unwind: "$ingredients" }, // Flatten ingredients array
+      { $group: { _id: "$ingredients" } }, // Get unique ingredients
+      { $sort: { _id: 1 } }, // Sort alphabetically
+    ]);
 
+    res.json(ingredients.map(i => i._id.charAt(0).toUpperCase() + i._id.slice(1))); // Return as an array of strings
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", details: error.message });
+  }
+});
 
 module.exports = router;

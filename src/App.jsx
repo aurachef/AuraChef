@@ -17,8 +17,8 @@ import AuthProvider, { useAuth } from "./context/AuthProvider"; // ✅ Correct i
 
 const App = () => {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <Navbar />
         <div className="container mx-auto px-4 pb-20">
           <Routes>
@@ -35,21 +35,22 @@ const App = () => {
             <Route path="/forgot-password" element={<ForgotPassword />} />
 
             {/* ✅ Protect Admin Dashboard Route */}
-            <Route
-              path="/admin-dashboard"
-              element={<ProtectedAdminRoute />}
-            />
+            <Route path="/admin-dashboard" element={<ProtectedAdminRoute />} />
           </Routes>
         </div>
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 };
 
 // ✅ Protected Route Component
 const ProtectedAdminRoute = () => {
   const { user } = useAuth(); // ✅ Access user from AuthContext
-  return user?.isAdmin ? <AdminDashboard /> : <Navigate to="/profile" replace />;
+  return user?.isAdmin ? (
+    <AdminDashboard />
+  ) : (
+    <Navigate to="/profile" replace />
+  );
 };
 
 export default App;
